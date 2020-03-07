@@ -1,6 +1,4 @@
 ﻿
-
-
 @{
     ViewData["Title"] = "设备列表";
 }
@@ -19,10 +17,10 @@
             <table class="table table-striped table-sm">
                 <thead>
                     <tr>
-                        <th>固定资产编号</th>
+                        <th>资产编号</th>
                         <th>设备名称</th>
-                        <th>近期维护人员</th>
-                        <th>近期维护时间</th>
+                        <th>维护人员</th>
+                        <th>维护时间</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -38,3 +36,8 @@
             </table>
         </div>
     </div>
+<script>
+    $(function () {
+        $("#EquipmentList").addClass("active");
+    });
+</script>

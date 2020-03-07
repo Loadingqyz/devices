@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Equipment.Controllers
 {
-    public class EquipmentController : Controller
+    public class EquipmentController : BaseController
     {
         public IActionResult List()
         {
