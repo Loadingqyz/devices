@@ -19,38 +19,6 @@ namespace Equipment.Controllers
             _userService = new UserService();
         }
 
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult RunLogin([FromBody]UserLoginModel userLoginModel)
-        {
-            if (!ModelState.IsValid)
-                return new JsonResult("IsValid");
-
-            var userEntity = _userService.CheckUserLogin(userLoginModel);
-            if (userEntity == null)
-            {
-                return new JsonResult("用户名或密码错误");
-            }
-            UserLoginResultModel resultModel = new UserLoginResultModel();
-            resultModel.AuthInfo = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{userEntity.UserName}:{userEntity.Password}"));
-            resultModel.UserName = userEntity.UserName;
-            resultModel.UserId = userEntity.Id.ToString();
-
-            CookieOptions cookieOptions = new CookieOptions()
-            {
-                Expires = DateTime.Now.AddDays(7)
-            };
-            HttpContext.Response.Cookies.Append("UserId", resultModel.UserId, cookieOptions);
-            HttpContext.Response.Cookies.Append("UserName", resultModel.UserName, cookieOptions);
-            HttpContext.Response.Cookies.Append("AuthInfo", resultModel.AuthInfo, cookieOptions);
-
-            return new JsonResult(resultModel);
-        }
-
         public IActionResult List()
         {
             ViewBag.UserList = _userService.GetUserList();
@@ -80,18 +48,22 @@ namespace Equipment.Controllers
             return new JsonResult(code);
         }
 
-        public IActionResult Update()
+        public IActionResult Update(string userId)
         {
+            UserEntity userEntity= _userService.GetUserById(userId);
+            ViewBag.User = userEntity;
             return View();
         }
 
-        public IActionResult LoginOut()
+        [HttpPost]
+        public IActionResult RunUpdate([FromBody]UserUpdateModel userUpdateModel)
         {
-            HttpContext.Response.Cookies.Delete("UserId");
-            HttpContext.Response.Cookies.Delete("UserName");
-            HttpContext.Response.Cookies.Delete("AuthInfo");
-            HttpContext.Response.Redirect("/User/Login");
-            return new JsonResult("ok");
+            int code = _userService.UpdateUser(userUpdateModel);
+            if(code==-1)
+                return new JsonResult("该手机号码已经被使用！");
+            return new JsonResult(code);
         }
+
+        
     }
 }

@@ -1,37 +1,31 @@
 ﻿@model Equipment.Models.User.UserEntity
-
 @{
-    ViewData["Title"] = "Add";
+    ViewData["Title"] = "Update";
 }
+
 <div class="text-center">
     <div style="margin-top:20px">
+        <input id="UserId" type="hidden" value="@ViewBag.User.Id" />
         <label for="UserName" class="sr-only">名称</label>
-        <input type="text" id="UserName" class="form-control" placeholder="名称" autocomplete="off" required autofocus style="width:40%">
+        <input type="text" id="UserName" class="form-control" placeholder="名称" autocomplete="off" required autofocus style="width:40%" value="@ViewBag.User.UserName">
 
         <label for="Phone" class="sr-only">电话号码</label>
-        <input type="text" id="Phone" class="form-control" placeholder="电话号码" autocomplete="off" required autofocus style="width:40%">
-
-        <label for="Password" class="sr-only">密码</label>
-        <input type="password" id="Password" class="form-control" placeholder="密码" autocomplete="off" required autofocus style="width:40%">
+        <input type="text" id="Phone" class="form-control" placeholder="电话号码" autocomplete="off" required autofocus style="width:40%" value="@ViewBag.User.Phone">
 
         <div class="text-error" id="error" style="display:none"></div>
         <button class="btn btn-lg btn-primary btn-block" type="button" id="save_btn" style="width:40%">保存</button>
     </div>
 </div>
-<script src="~/lib/jquery/dist/jquery.md5.js"></script>
-
 <script>
     $(function () {
-         $("#UserList").addClass("active");
-        $(".form-control").each(function () {
-            $(this).val("");
-        });
+        $("#UserList").addClass("active");
+
         $("#save_btn").click(function () {
             $("#error").html("");
             var data = {
                 UserName: $("#UserName").val().trim(),
                 Phone: $("#Phone").val().trim(),
-                Password: $("#Password").val().trim()
+                UserId:$("#UserId").val().trim()
             };
             if (data.UserName == "") {
                 $("#error").html("请输入名称");
@@ -41,31 +35,24 @@
                 $("#error").html("请输入手机号码");
                 return;
             }
-
-            if (data.Password == "") {
-                $("#error").html("请输入密码");
-                return;
-            }
-            data.Password = $.md5(data.Password);
             $.ajax({
                 type: "POST",
-                url: "/User/RunAdd",
+                url: "/User/RunUpdate",
                 contentType: "application/json",
                 data: JSON.stringify(data),
                 error: function (jqXHR, textStatus, errorThrown) {
                     alert("Something went wrong!");
                 },
                 success: function (result) {
-                    console.log(result);
                     if (result != null && result == "1") {
-                        alert("新增成功");
+                        alert("修改成功");
                         location.href = "/User/List";
+                    }else {
+                          alert("修改失败:"+result);
                     }
-                    $("#error").html(result);
                 }
             });
         });
     });
-
 </script>
 

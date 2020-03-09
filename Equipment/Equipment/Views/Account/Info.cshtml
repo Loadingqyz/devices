@@ -1,0 +1,59 @@
+﻿
+@{
+    ViewData["Title"] = "账号信息";
+}
+
+    <div class="text-center">
+        <div style="margin-top:20px">
+            <label for="UserName" class="sr-only">名称</label>
+            <input type="text" id="UserName" class="form-control" placeholder="名称" autocomplete="off" required autofocus style="width:40%" value="@ViewBag.User.UserName">
+
+            <label for="Phone" class="sr-only">电话号码</label>
+            <input type="text" id="Phone" class="form-control" placeholder="电话号码" autocomplete="off" required autofocus style="width:40%" value="@ViewBag.User.Phone">
+
+            <div class="text-error" id="error" style="display:none"></div>
+            <button class="btn btn-lg btn-primary btn-block" type="button" id="save_btn" style="width:40%">保存</button>
+        </div>
+    </div>
+
+    <script>
+    $(function () {
+        $("#AccountUpdate").addClass("active");
+        $("#AccountList_Item_Ul").css("display", "");
+
+        $("#save_btn").click(function () {
+            $("#error").html("");
+            var data = {
+                UserName: $("#UserName").val().trim(),
+                Phone: $("#Phone").val().trim()
+            };
+            if (data.UserName == "") {
+                $("#error").html("请输入名称");
+                return;
+            }
+            if (data.Phone == "") {
+                $("#error").html("请输入手机号码");
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Account/RunInfoUpdate",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert("Something went wrong!");
+                },
+                success: function (result) {
+                    if (result != null && result == "1") {
+                        alert("修改成功");
+                        location.href = "/Account/Info";
+                    } else {
+                          alert("修改失败:"+result);
+                    }
+                }
+            });
+        });
+    });
+
+    </script>
+
