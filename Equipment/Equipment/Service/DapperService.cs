@@ -33,7 +33,7 @@ namespace Equipment.Service
 		private DapperService()
 		{
 			// 这里为了方便演示直接写的字符串，实例项目中可以将连接字符串放在配置文件中，再进行读取。
-			_connection = @"Database='ttl';Data Source=sh-cynosdbmysql-grp-iqthd3q4.sql.tencentcdb.com;Port=23948;User ID=root;Password=Qianyuzhe0!0;Connection Timeout=60;Keepalive=120;";
+			_connection = @"Database='ttl';Data Source=sh-cynosdbmysql-grp-iqthd3q4.sql.tencentcdb.com;Port=23948;User ID=root;Password=Qianyuzhe0!0;Connection Timeout=60;Keepalive=120;Character Set=utf8;";
 		}
 
 		/// <summary>

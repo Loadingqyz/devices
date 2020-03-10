@@ -35,7 +35,14 @@ namespace Equipment.Controllers
         {
             if (!ModelState.IsValid)
                 return new JsonResult("IsValid");
-            int code = _userService.AddUser(new UserEntity() { Password = userInfoModel.Password, Phone = userInfoModel.Phone, UserName = userInfoModel.UserName });
+            var entity = new UserEntity()
+            {
+                Password = userInfoModel.Password,
+                Phone = userInfoModel.Phone,
+                UserName = userInfoModel.UserName,
+                CreateUserId = Convert.ToInt64(HttpContext.Request.Cookies["UserId"])
+            };
+            int code = _userService.AddUser(entity);
             return new JsonResult(code);
         }
 

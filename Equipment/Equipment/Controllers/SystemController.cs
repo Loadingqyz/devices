@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Equipment.Controllers
 {
-    public class SystemController : Controller
+    public class SystemController : BaseController
     {
         private readonly UserService _userService;
 

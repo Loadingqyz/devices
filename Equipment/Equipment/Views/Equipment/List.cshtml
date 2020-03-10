@@ -8,7 +8,7 @@
             <h1 class="h5">设备列表</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group mr-2">
-                    <button type="button" class="btn btn-sm btn-outline-secondary">新增</button>
+                    <button id="NewEquipment" type="button" class="btn btn-sm btn-outline-secondary">新增</button>
                     <button type="button" class="btn btn-sm btn-outline-secondary">导出</button>
                 </div>
             </div>
@@ -19,6 +19,7 @@
                     <tr>
                         <th>资产编号</th>
                         <th>设备名称</th>
+                        <th>报废日期</th>
                         <th>维护人员</th>
                         <th>维护时间</th>
                         <th>操作</th>
@@ -29,8 +30,9 @@
                         <td>1,001</td>
                         <td>Lorem</td>
                         <td>ipsum</td>
+                        <td>ipsum</td>
                         <td>dolor</td>
-                        <td><a href="#">修改</a> <a href="#">删除</a> <a href="#">操作日志</a></td>
+                        <td><a href="#">二维码</a> <a href="#">修改</a> <a href="#">删除</a> <a href="#">巡检记录</a></td>
                     </tr>
                 </tbody>
             </table>
@@ -39,5 +41,8 @@
 <script>
     $(function () {
         $("#EquipmentList").addClass("active");
+        $("#NewEquipment").click(function () {
+            location.href = "/Equipment/Add";
+        });
     });
 </script>

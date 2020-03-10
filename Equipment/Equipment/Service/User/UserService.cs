@@ -35,7 +35,7 @@ namespace Equipment.Service.User
 
 		public int AddUser(UserEntity userEntity)
 		{
-			return MySqlContext.Execute("INSERT INTO `ttl`.`ttl_user` (`UserName`,`Password`,`Phone`) VALUES(@UserName,@Password,@Phone); ", userEntity);
+			return MySqlContext.Execute("INSERT INTO `ttl`.`ttl_user` (`UserName`,`Password`,`Phone`,`CreateUserId`) VALUES(@UserName,@Password,@Phone,@CreateUserId); ", userEntity);
 		}
 
 		public int DeleteUser(string userId)
@@ -43,7 +43,7 @@ namespace Equipment.Service.User
 			UserEntity user = GetUserById(userId);
 			if (user == null)
 				return -1;
-			MySqlContext.Execute($"INSERT IGNORE INTO `ttl`.`ttl_user_delete` (  `Tdate`,`UserName`,`Password`,`Phone`,`IsSuperAdmin`) SELECT `Tdate`,`UserName`,`Password`,`Phone`,`IsSuperAdmin` FROM `ttl_user` WHERE id={userId}");
+			MySqlContext.Execute($"INSERT IGNORE INTO `ttl`.`ttl_user_delete` (  `Tdate`,`UserName`,`Password`,`Phone`,`IsSuperAdmin`,`CreateUserId`) SELECT `Tdate`,`UserName`,`Password`,`Phone`,`IsSuperAdmin`,`CreateUserId` FROM `ttl`.`ttl_user` WHERE id={userId}");
 			MySqlContext.Execute($"DELETE From `ttl`.`ttl_user` where `Id`={userId}");
 			return 1;
 		}

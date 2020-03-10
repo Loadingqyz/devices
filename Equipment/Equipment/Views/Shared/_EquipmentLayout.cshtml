@@ -55,10 +55,10 @@
     </script>
 </head>
 <body>
-    @{ 
+    @{
         string userId = _httpContextAccessor.HttpContext.Request.Cookies["UserId"];
         string userIdKey = $"UserId_{userId}";
-        Equipment.Models.User.UserEntity userInfo=_httpContextAccessor.HttpContext.Items[userIdKey] as  Equipment.Models.User.UserEntity;
+        Equipment.Models.User.UserEntity userInfo = _httpContextAccessor.HttpContext.Items[userIdKey] as Equipment.Models.User.UserEntity;
         if (userInfo == null)
             throw new Exception("base userInfo is null");
     }
@@ -66,7 +66,7 @@
         <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Company name</a>
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
-                <a class="nav-link" href="/User/LoginOut">@(_httpContextAccessor.HttpContext.Request.Cookies["UserName"]) [退出账号]</a>
+                <a class="nav-link" href="/System/LoginOut">@(_httpContextAccessor.HttpContext.Request.Cookies["UserName"]) [退出账号]</a>
             </li>
         </ul>
     </nav>
@@ -95,20 +95,20 @@
                                 </a>
                             </li>
                         }
-                    <li class="nav-item" id="AccountList_Li">
-                        <a href="javascript:void(0);" class="nav-link" id="AccountList_A">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                            账号管理
-                        </a>
-                       <ul class="nav flex-column" style="padding-left: 25px;display:none;" id="AccountList_Item_Ul">
-                           <li class="nav-item">
-                               <a id="AccountPassword" class="nav-link" href="/Account/Password">密码修改</a>
-                           </li>
-                           <li class="nav-item">
-                               <a id="AccountUpdate" class="nav-link" href="/Account/Info">账号修改</a>
-                           </li>
-                       </ul>
-                    </li>
+                        <li class="nav-item" id="AccountList_Li">
+                            <a href="javascript:void(0);" class="nav-link" id="AccountList_A">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                                账号管理
+                            </a>
+                            <ul class="nav flex-column" style="padding-left: 25px;display:none;" id="AccountList_Item_Ul">
+                                <li class="nav-item">
+                                    <a id="AccountPassword" class="nav-link" href="/Account/Password">密码修改</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="AccountUpdate" class="nav-link" href="/Account/Info">账号修改</a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -117,6 +117,7 @@
                 @RenderBody()
             </main>
         </div>
+
     </div>
 </body>
 </html>
