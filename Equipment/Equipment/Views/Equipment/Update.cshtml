@@ -1,7 +1,8 @@
 ﻿
 @{
-    ViewData["Title"] = "Add";
+    ViewData["Title"] = "Update";
 }
+
 <link href="~/lib/bootstrap/dist/datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
 <script src="~/lib/bootstrap/dist/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <script src="~/lib/bootstrap/dist/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
@@ -14,14 +15,14 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="FixedAssetId">资产编号</label>
-                        <input type="text" class="form-control" id="FixedAssetId" placeholder="" value="" required="">
+                        <input type="text" class="form-control" id="FixedAssetId" placeholder="" value="@ViewBag.Equipment.FixedAssetId" required="">
                         <div class="invalid-feedback" id="FixedAssetId_Feedback">
                             资产编号必填
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="EquipmentName">设备名称</label>
-                        <input type="text" class="form-control" id="EquipmentName" placeholder="" value="" required="">
+                        <input type="text" class="form-control" id="EquipmentName" placeholder="" value="@ViewBag.Equipment.EquipmentName" required="">
                         <div class="invalid-feedback" id="EquipmentName_Feedback">
                             设备名称必填
                         </div>
@@ -40,7 +41,7 @@
                                 </svg>
                             </span>
                         </div>
-                        <input type="text" class="form-control" id="ScrapDate" placeholder="日期格式：yyyy-MM-dd">
+                        <input type="text" class="form-control" id="ScrapDate" placeholder="日期格式：yyyy-MM-dd" value="@ViewBag.Equipment.ScrapDateStr">
                     </div>
                 </div>
 
@@ -48,10 +49,17 @@
                     <label for="LastMaintenanceName">最近维护人员</label>
                     @foreach (var user in ViewBag.UserList)
                     {
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="@(user.Id)_checkbox" data-user="@user.UserName" data-userId="@user.Id">
-                            <label class="custom-control-label" for="@(user.Id)_checkbox">@user.UserName</label>
-                        </div>
+                <div class="custom-control custom-checkbox">
+                    @if (ViewBag.Equipment.LastMaintenanceIdSet.Contains(user.Id.ToString()))
+                    {
+                        <input type="checkbox" class="custom-control-input" id="@(user.Id)_checkbox" data-user="@user.UserName" checked="checked" data-userId="@user.Id">
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="custom-control-input" id="@(user.Id)_checkbox" data-user="@user.UserName" data-userId="@user.Id">
+                    }
+                    <label class="custom-control-label" for="@(user.Id)_checkbox">@user.UserName</label>
+                </div>
                     }
                 </div>
                 <div class="mb-3">
@@ -65,41 +73,41 @@
                                 </svg>
                             </span>
                         </div>
-                        <input type="text" class="form-control" id="LastMaintenanceTime" placeholder="日期格式：yyyy-MM-dd">
+                        <input type="text" class="form-control" id="LastMaintenanceTime" placeholder="日期格式：yyyy-MM-dd" value="@ViewBag.Equipment.LastMaintenanceTimeStr">
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="Remark">备注</label>
-                    <textarea class="form-control" id="Remark"></textarea>
+                    <textarea class="form-control" id="Remark">@ViewBag.Equipment.Remark</textarea>
                 </div>
 
                 <hr class="mb-4">
                 <hr class="mb-4">
+                <input type="hidden" id="EquipmentId" value="@ViewBag.Equipment.EquipmentId" />
                 <button id="save_btn" class="btn btn-primary btn-lg btn-block" type="button">保存</button>
             </div>
         </div>
     </div>
 </div>
-
-
 <script>
     $(function () {
         $(".Picker").datetimepicker({
-            language:  'zh-CN',
+            language: 'zh-CN',
             weekStart: 1,
-            todayBtn:  1,
-		    autoclose: 1,
-		    todayHighlight: 1,
-		    startView: 2,
-		    minView: 2,
-		    forceParse: 0
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 0
         });
         $("#EquipmentList").addClass("active");
-       
+
         $("#save_btn").click(function () {
             try {
                 var data = {
+                    EquipmentId:$("#EquipmentId").val().trim(),
                     EquipmentName: $("#EquipmentName").val().trim(),
                     FixedAssetId: $("#FixedAssetId").val().trim(),
                     Remark: $("#Remark").val().trim()
@@ -141,7 +149,7 @@
                 }
                 $.ajax({
                     type: "POST",
-                    url: "/Equipment/RunAdd",
+                    url: "/Equipment/RunUpdate",
                     contentType: "application/json",
                     data: JSON.stringify(data),
                     error: function (jqXHR, textStatus, errorThrown) {
@@ -149,12 +157,8 @@
                     },
                     success: function (result) {
                         if (result != null && result == "1") {
-                            if (confirm("新增成功，是否继续新增设备？")) {
-                                location.href = "/Equipment/Add";
-                            } else {
-                                location.href = "/Equipment/List";
-                            }
-                        }else {
+                             alert("保存成功");
+                        } else {
                             alert("保存失败,"+result);
                         }
                     }

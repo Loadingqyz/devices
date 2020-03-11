@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace Equipment.Models.Equipment
 {
-	public class EquipmentAddModel
+	public class EquipmentUpdateModel
 	{
+		[Required]
+		public string EquipmentId { get; set; }
 		[Required]
 		public string EquipmentName { get; set; }
 		public string LastMaintenanceNames { get; set; }
@@ -22,14 +24,15 @@ namespace Equipment.Models.Equipment
 		{
 			return new EquipmentEntity()
 			{
-				EquipmentName= this.EquipmentName,
+				Id=Convert.ToInt64(this.EquipmentId),
+				EquipmentName = this.EquipmentName,
 				LastMaintenanceNames = this.LastMaintenanceNames,
-				LastMaintenanceIds=this.LastMaintenanceIds,
+				LastMaintenanceIds = this.LastMaintenanceIds,
 				LastMaintenanceTime = this.LastMaintenanceTime,
 				FixedAssetId = this.FixedAssetId,
 				Remark = this.Remark,
 				ScrapDate = this.ScrapDate,
-				IsDelete=0
+				IsDelete = 0
 			};
 		}
 	}

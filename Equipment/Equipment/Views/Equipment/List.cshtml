@@ -9,7 +9,6 @@
             <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group mr-2">
                     <button id="NewEquipment" type="button" class="btn btn-sm btn-outline-secondary">新增</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary">导出</button>
                 </div>
             </div>
         </div>
@@ -26,16 +25,52 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1,001</td>
-                        <td>Lorem</td>
-                        <td>ipsum</td>
-                        <td>ipsum</td>
-                        <td>dolor</td>
-                        <td><a href="#">二维码</a> <a href="#">修改</a> <a href="#">删除</a> <a href="#">巡检记录</a></td>
-                    </tr>
+                    @foreach (var equipment in ViewBag.Equipment.EquipmentList)
+                    {
+                        <tr id="equipment_@(equipment.Id)_tr">
+                            <td>@equipment.FixedAssetId</td>
+                            <td>@equipment.EquipmentName</td>
+                            <td>@equipment.ScrapDateStr</td>
+                            <td>@equipment.LastMaintenanceNames</td>
+                            <td>@equipment.LastMaintenanceTimeStr</td>
+                            <td  eid="@equipment.Id"><a href="#">二维码</a> <a href="/Equipment/Update?eid=@equipment.Id">修改</a> <a class="equipment_delete"  href="javascript:void(0);">删除</a></td>
+                        </tr>
+                    }
                 </tbody>
             </table>
+        </div>
+        <div style="float:right;">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    @if (ViewBag.Equipment.PageIndex != 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="/Equipment/List?page=@(ViewBag.Equipment.PageIndex-1)" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    }
+                    @for (int i = 1; i <= ViewBag.Equipment.TotalPage; i++)
+                    {
+                        @if (i == ViewBag.Equipment.PageIndex)
+                        {
+                            <li class="page-item"><a class="page-link" style="font-weight: bold;" href="/Equipment/List?page=@i">@i</a></li>
+                        }
+                        else
+                        {
+                            <li class="page-item"><a class="page-link" href="/Equipment/List?page=@i">@i</a></li>
+                        }
+                    }
+                    @if (ViewBag.Equipment.PageIndex != ViewBag.Equipment.TotalPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="/Equipment/List?page=@(ViewBag.Equipment.PageIndex+1)" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
         </div>
     </div>
 <script>
@@ -43,6 +78,30 @@
         $("#EquipmentList").addClass("active");
         $("#NewEquipment").click(function () {
             location.href = "/Equipment/Add";
+        });
+        $(".equipment_delete").click(function () {
+            var eid = $(this).parent().attr("eid")
+            if (confirm("确认是否删除？")) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Equipment/RunDelete",
+                    data: {
+                        "eid": eid
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert("Something went wrong!");
+                    },
+                    success: function (result) {
+                        if (result != null && result == "1") {
+                            alert("删除成功");
+                            $("#equipment_" + eid + "_tr").remove();
+                        } else {
+                            alert("系统异常,code="+result);
+                        }
+                        
+                    }
+                });
+            }
         });
     });
 </script>

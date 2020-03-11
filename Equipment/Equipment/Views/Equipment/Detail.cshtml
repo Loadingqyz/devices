@@ -1,12 +1,45 @@
 ﻿
 @{
-    ViewData["Title"] = "Add";
+    Layout = null;
 }
-<link href="~/lib/bootstrap/dist/datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
-<script src="~/lib/bootstrap/dist/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
-<script src="~/lib/bootstrap/dist/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>设备管理系统</title>
+    <!-- Bootstrap core CSS -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="~/lib/bootstrap/dist/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="~/lib/bootstrap/dist/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="~/lib/bootstrap/dist/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="manifest" href="~/lib/bootstrap/dist/assets/img/favicons/manifest.json">
+    <link rel="mask-icon" href="~/lib/bootstrap/dist/assets/img/favicons/safari-pinned-tab.svg" color="#563d7c">
+    <link rel="icon" href="~/lib/bootstrap/dist/assets/img/favicons/favicon.ico">
+    <meta name="theme-color" content="#563d7c">
 
-<div>
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @@media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+    <link href="~/lib/bootstrap/dist/assets/css/dashboard.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+</head>
+<body class="text-center">
     <div class="row">
         <div class="col-md-8 order-md-1">
             <h4 class="mb-3">设备信息</h4>
@@ -14,14 +47,14 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="FixedAssetId">资产编号</label>
-                        <input type="text" class="form-control" id="FixedAssetId" placeholder="" value="" required="">
+                        <input type="text" class="form-control" id="FixedAssetId" placeholder="" value="@ViewBag.Equipment.FixedAssetId" required="">
                         <div class="invalid-feedback" id="FixedAssetId_Feedback">
                             资产编号必填
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="EquipmentName">设备名称</label>
-                        <input type="text" class="form-control" id="EquipmentName" placeholder="" value="" required="">
+                        <input type="text" class="form-control" id="EquipmentName" placeholder="" value="@ViewBag.Equipment.EquipmentName" required="">
                         <div class="invalid-feedback" id="EquipmentName_Feedback">
                             设备名称必填
                         </div>
@@ -40,7 +73,7 @@
                                 </svg>
                             </span>
                         </div>
-                        <input type="text" class="form-control" id="ScrapDate" placeholder="日期格式：yyyy-MM-dd">
+                        <input type="text" class="form-control" id="ScrapDate" placeholder="日期格式：yyyy-MM-dd" value="@ViewBag.Equipment.ScrapDateStr">
                     </div>
                 </div>
 
@@ -49,7 +82,14 @@
                     @foreach (var user in ViewBag.UserList)
                     {
                         <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="@(user.Id)_checkbox" data-user="@user.UserName" data-userId="@user.Id">
+                            @if (ViewBag.Equipment.LastMaintenanceIdSet.Contains(user.Id.ToString()))
+                            {
+                                <input type="checkbox" class="custom-control-input" id="@(user.Id)_checkbox" data-user="@user.UserName" checked="checked" data-userId="@user.Id">
+                            }
+                            else
+                            {
+                                <input type="checkbox" class="custom-control-input" id="@(user.Id)_checkbox" data-user="@user.UserName" data-userId="@user.Id">
+                            }
                             <label class="custom-control-label" for="@(user.Id)_checkbox">@user.UserName</label>
                         </div>
                     }
@@ -65,103 +105,21 @@
                                 </svg>
                             </span>
                         </div>
-                        <input type="text" class="form-control" id="LastMaintenanceTime" placeholder="日期格式：yyyy-MM-dd">
+                        <input type="text" class="form-control" id="LastMaintenanceTime" placeholder="日期格式：yyyy-MM-dd" value="@ViewBag.Equipment.LastMaintenanceTimeStr">
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="Remark">备注</label>
-                    <textarea class="form-control" id="Remark"></textarea>
+                    <textarea class="form-control" id="Remark">@ViewBag.Equipment.Remark</textarea>
                 </div>
 
                 <hr class="mb-4">
                 <hr class="mb-4">
+                <input type="hidden" id="EquipmentId" value="@ViewBag.Equipment.EquipmentId" />
                 <button id="save_btn" class="btn btn-primary btn-lg btn-block" type="button">保存</button>
             </div>
         </div>
     </div>
-</div>
-
-
-<script>
-    $(function () {
-        $(".Picker").datetimepicker({
-            language:  'zh-CN',
-            weekStart: 1,
-            todayBtn:  1,
-		    autoclose: 1,
-		    todayHighlight: 1,
-		    startView: 2,
-		    minView: 2,
-		    forceParse: 0
-        });
-        $("#EquipmentList").addClass("active");
-       
-        $("#save_btn").click(function () {
-            try {
-                var data = {
-                    EquipmentName: $("#EquipmentName").val().trim(),
-                    FixedAssetId: $("#FixedAssetId").val().trim(),
-                    Remark: $("#Remark").val().trim()
-                };
-
-                if (data.FixedAssetId == "") {
-                    $("#FixedAssetId_Feedback").show();
-                }
-
-                if (data.EquipmentName == "") {
-                    $("#EquipmentName_Feedback").show();
-                }
-
-                if (data.FixedAssetId == "" || data.EquipmentName == "") {
-                    return;
-                }
-
-                var lastMaintenanceNames = "";
-                var lastMaintenanceIds = "";
-                $(".custom-control-input").each(function () {
-                    if ($(this).is(':checked')) {
-                        lastMaintenanceNames += "," + $(this).attr("data-user");
-                        lastMaintenanceIds += "," + $(this).attr("data-userId");
-                    }
-                });
-                 if (lastMaintenanceIds != "") {
-                    data.LastMaintenanceIds = lastMaintenanceIds.substring(1);
-                }
-                if (lastMaintenanceNames != "") {
-                    data.LastMaintenanceNames = lastMaintenanceNames.substring(1);
-                }
-
-                if ($("#LastMaintenanceTime").val().trim() != "") {
-                    data.LastMaintenanceTime = $("#LastMaintenanceTime").val().trim();
-                }
-
-                if ($("#ScrapDate").val().trim() != "") {
-                    data.ScrapDate = $("#ScrapDate").val().trim();
-                }
-                $.ajax({
-                    type: "POST",
-                    url: "/Equipment/RunAdd",
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        alert("Something went wrong!");
-                    },
-                    success: function (result) {
-                        if (result != null && result == "1") {
-                            if (confirm("新增成功，是否继续新增设备？")) {
-                                location.href = "/Equipment/Add";
-                            } else {
-                                location.href = "/Equipment/List";
-                            }
-                        }else {
-                            alert("保存失败,"+result);
-                        }
-                    }
-                });
-            } catch (e) {
-                alert(e);
-            }
-        });
-    });
-</script>
+</body>
+</html>
