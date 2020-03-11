@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Equipment.Core.Common;
 using Equipment.Entities.Equipment;
 using Equipment.Models.Equipment;
 using Equipment.Models.User;
@@ -22,7 +25,6 @@ namespace Equipment.Controllers
         }
         public IActionResult List()
         {
-            
             EquipmentQueryModel queryModel = new EquipmentQueryModel();
             if (!string.IsNullOrEmpty(Request.Query["page"]))
                 queryModel.PageIndex = Convert.ToInt32(Request.Query["page"]);
@@ -130,6 +132,17 @@ namespace Equipment.Controllers
             };
             int code = _equipmentService.UpdateEquipment(entity,"删除设备");
             return new JsonResult(code);
+        }
+
+        [HttpGet]
+        public void RunQRCode(string eid)
+        {
+            Response.ContentType = "image/jpeg";
+            var bitmap = RaffQRCode.GetQRCode($"http://{Request.Host}/Equipment/detail?eid={eid}", 4);
+            MemoryStream ms = new MemoryStream();
+            bitmap.Save(ms, ImageFormat.Jpeg);
+            Response.Body.WriteAsync(ms.GetBuffer(), 0, Convert.ToInt32(ms.Length));
+            Response.Body.Close();
         }
     }
 }

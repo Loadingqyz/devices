@@ -33,7 +33,7 @@
                             <td>@equipment.ScrapDateStr</td>
                             <td>@equipment.LastMaintenanceNames</td>
                             <td>@equipment.LastMaintenanceTimeStr</td>
-                            <td  eid="@equipment.Id"><a href="#">二维码</a> <a href="/Equipment/Update?eid=@equipment.Id">修改</a> <a class="equipment_delete"  href="javascript:void(0);">删除</a></td>
+                            <td  eid="@equipment.Id"><a target="_blank" href="/Equipment/RunQRCode?eid=@equipment.Id">二维码</a> <a href="/Equipment/Update?eid=@equipment.Id">修改</a> <a class="equipment_delete"  href="javascript:void(0);">删除</a></td>
                         </tr>
                     }
                 </tbody>
