@@ -80,7 +80,7 @@ namespace Equipment.Controllers
             EquipmentEntity equipmentEntity = _equipmentService.GetEquipmentById(Convert.ToInt64(Request.Query["eid"]));
             if (equipmentEntity == null)
                 return RedirectToAction("List", "Equipment");
-            EquipmentUpdateViewModel equipmentModel = new EquipmentUpdateViewModel()
+            EquipmentDetailViewModel equipmentModel = new EquipmentDetailViewModel()
             {
                 EquipmentName = equipmentEntity.EquipmentName,
                 FixedAssetId = equipmentEntity.FixedAssetId,

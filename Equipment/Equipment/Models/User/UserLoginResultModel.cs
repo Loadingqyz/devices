@@ -10,5 +10,6 @@ namespace Equipment.Models.User
 		public string UserId { get; set; }
 		public string UserName { get; set; }
 		public string AuthInfo { get; set; }
+		public string RedirectUrl { get; set; }
 	}
 }

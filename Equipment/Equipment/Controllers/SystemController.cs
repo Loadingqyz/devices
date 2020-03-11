@@ -38,6 +38,10 @@ namespace Equipment.Controllers
             resultModel.UserName = userEntity.UserName;
             resultModel.UserId = userEntity.Id.ToString();
 
+            if(HttpContext.Request.Cookies.ContainsKey("RedirectUrl"))
+                resultModel.RedirectUrl = HttpContext.Request.Cookies["RedirectUrl"];
+
+
             CookieOptions cookieOptions = new CookieOptions()
             {
                 Expires = DateTime.Now.AddDays(7)
