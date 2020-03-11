@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Equipment.Core.Filters
 {
@@ -70,7 +71,7 @@ namespace Equipment.Core.Filters
 			{
 				if (!_loginUrl.Contains(requestUrl))
 				{
-					context.HttpContext.Response.Cookies.Append("RedirectUrl", requestUrl, new CookieOptions()
+					context.HttpContext.Response.Cookies.Append("RedirectUrl", context.HttpContext.Request.GetDisplayUrl(), new CookieOptions()
 					{
 						Expires = DateTime.Now.AddDays(7)
 					});
