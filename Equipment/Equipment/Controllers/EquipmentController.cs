@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,8 @@ using Equipment.Models.Equipment;
 using Equipment.Models.User;
 using Equipment.Service.Equipment;
 using Equipment.Service.User;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Equipment.Controllers
@@ -18,10 +21,12 @@ namespace Equipment.Controllers
     {
         private readonly UserService _userService;
         private readonly EquipmentService _equipmentService;
-        public EquipmentController()
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        public EquipmentController(IWebHostEnvironment hostingEnvironment)
         {
             _userService = new UserService();
             _equipmentService = new EquipmentService();
+            _hostingEnvironment = hostingEnvironment;
         }
         public IActionResult List()
         {
@@ -59,6 +64,8 @@ namespace Equipment.Controllers
             ViewBag.Equipment = equipmentModel;
             List<UserEntity> userEntities = _userService.GetUserList();
             ViewBag.UserList = userEntities;
+
+            ViewBag.QRCodeUrl = $"http{(HttpContext.Request.IsHttps?"s":"")}://{HttpContext.Request.Host}/Equipment/RunQRCode?eid={equipmentModel.EquipmentId}&isShowName=false&pixel=6"; 
             return View();
         }
 
@@ -134,15 +141,54 @@ namespace Equipment.Controllers
             return new JsonResult(code);
         }
 
-        [HttpGet]
-        public void RunQRCode(string eid)
+        public IActionResult ShowQRCode(string eid)
         {
+            ViewBag.QRCodeUrl = $"http{(HttpContext.Request.IsHttps ? "s" : "")}://{HttpContext.Request.Host}/Equipment/RunQRCode?eid={eid}";
+            return View();
+        }
+
+        [HttpGet]
+        public void RunQRCode(string eid,bool isShowName=true, int pixel=8)
+        {
+            string message = string.Empty;
+            EquipmentEntity oldEntity = _equipmentService.GetEquipmentById(Convert.ToInt64(eid));
+            if (oldEntity == null)
+                message = "二维码异常";
+            else
+                message = oldEntity.EquipmentName;
+
             Response.ContentType = "image/jpeg";
-            var bitmap = RaffQRCode.GetQRCode($"http://{Request.Host}/Equipment/detail?eid={eid}", 4);
+
+            Bitmap bitmap = RaffQRCode.GetQRCode($"http://{Request.Host}/Equipment/detail?eid={eid}", pixel);
+            if (isShowName)
+            {
+                int x = bitmap.Width;
+                int y = bitmap.Height;
+                Graphics g = Graphics.FromImage(bitmap);
+                Font f = new Font("Verdana", 15, FontStyle.Bold);//字体  
+                Brush b = new SolidBrush(Color.Red);//颜色  
+                g.DrawString($"【{message}】", f, b, x / 4, y - 25);
+            }
+
             MemoryStream ms = new MemoryStream();
             bitmap.Save(ms, ImageFormat.Jpeg);
             Response.Body.WriteAsync(ms.GetBuffer(), 0, Convert.ToInt32(ms.Length));
             Response.Body.Close();
+        }
+
+        [HttpGet]
+        public IActionResult SVGQRCode(string eid)
+        {
+            EquipmentEntity oldEntity = _equipmentService.GetEquipmentById(Convert.ToInt64(eid));
+            if (oldEntity == null)
+                return RedirectToAction("System", "Error");
+
+            var svgQrCode = RaffQRCode.GetSvgQRCode($"http://{Request.Host}/Equipment/detail?eid={eid}", 4);
+            var rootPath = _hostingEnvironment.ContentRootPath;
+            var svgName = $"{oldEntity.FixedAssetId}.svg";
+            System.IO.File.WriteAllText($@"{rootPath}\{svgName}", svgQrCode);
+            var readByte = System.IO.File.ReadAllBytes($@"{rootPath}\{svgName}");
+            return File(readByte, "image/svg", svgName);
         }
     }
 }
