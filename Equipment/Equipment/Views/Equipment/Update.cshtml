@@ -52,11 +52,11 @@
                 <div class="custom-control custom-checkbox">
                     @if (ViewBag.Equipment.LastMaintenanceIdSet.Contains(user.Id.ToString()))
                     {
-                        <input type="checkbox" class="custom-control-input" id="@(user.Id)_checkbox" data-user="@user.UserName" checked="checked" data-userId="@user.Id">
+                        <input type="checkbox" class="custom-control-input" id="@(user.Id)_checkbox" data-user="@user.UserName" checked="checked" data-userId="@user.Id" />
                     }
                     else
                     {
-                        <input type="checkbox" class="custom-control-input" id="@(user.Id)_checkbox" data-user="@user.UserName" data-userId="@user.Id">
+                        <input type="checkbox" class="custom-control-input" id="@(user.Id)_checkbox" data-user="@user.UserName" data-userId="@user.Id" />
                     }
                     <label class="custom-control-label" for="@(user.Id)_checkbox">@user.UserName</label>
                 </div>

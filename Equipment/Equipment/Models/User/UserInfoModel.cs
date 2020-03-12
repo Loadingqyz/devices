@@ -14,6 +14,7 @@ namespace Equipment.Models.User
 		public string Password { get; set; }
 		[Required]
 		public string Phone { get; set; }
+		public int? IsSuperAdmin { get; set; } = 1;
 	}
 
 	

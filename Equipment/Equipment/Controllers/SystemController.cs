@@ -61,5 +61,11 @@ namespace Equipment.Controllers
             HttpContext.Response.Redirect("/System/Login");
             return new JsonResult("ok");
         }
+
+        public IActionResult Error()
+        {
+            ViewBag.Error = "Error!!!";
+            return View();
+        }
     }
 }

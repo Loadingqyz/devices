@@ -49,7 +49,7 @@
                     @foreach (var user in ViewBag.UserList)
                     {
                         <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="@(user.Id)_checkbox" data-user="@user.UserName" data-userId="@user.Id">
+                            <input type="checkbox" class="custom-control-input" id="@(user.Id)_checkbox" data-user="@user.UserName" data-userId="@user.Id" />
                             <label class="custom-control-label" for="@(user.Id)_checkbox">@user.UserName</label>
                         </div>
                     }

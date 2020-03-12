@@ -35,7 +35,7 @@ namespace Equipment.Service.User
 
 		public int AddUser(UserEntity userEntity)
 		{
-			return MySqlContext.Execute("INSERT INTO `ttl`.`ttl_user` (`UserName`,`Password`,`Phone`,`CreateUserId`) VALUES(@UserName,@Password,@Phone,@CreateUserId); ", userEntity);
+			return MySqlContext.Execute("INSERT INTO `ttl`.`ttl_user` (`UserName`,`Password`,`Phone`,`CreateUserId`,`IsSuperAdmin`) VALUES(@UserName,@Password,@Phone,@CreateUserId,@IsSuperAdmin); ", userEntity);
 		}
 
 		public int DeleteUser(string userId)
@@ -65,6 +65,9 @@ namespace Equipment.Service.User
 
 			if (!string.IsNullOrEmpty(userUpdateModel.Password))
 				set.Append($",`Password` = @Password");
+
+			if(userUpdateModel.IsSuperAdmin.HasValue)
+				set.Append($",`IsSuperAdmin` = @IsSuperAdmin");
 
 			if (set.Length>0)
 				return MySqlContext.Execute($"UPDATE `ttl`.`ttl_user` SET {set.ToString().Substring(1)} where `Id`=@UserId", userUpdateModel);

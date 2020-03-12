@@ -1,0 +1,22 @@
+﻿
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h2>@ViewBag.Error</h2>
+<span><span id="seconds">5</span>秒后自动跳转</span>
+
+<script>
+    $(function () {
+        setTimeout(function () {
+            location.href = "/Equipment/List";
+        }, 5000);
+        var i = 5;
+        setInterval(function () {
+            i--;
+            $("#seconds").html(i);
+        },1000);
+    });
+
+</script>
+

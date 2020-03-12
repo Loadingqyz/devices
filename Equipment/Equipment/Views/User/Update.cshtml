@@ -3,19 +3,41 @@
     ViewData["Title"] = "Update";
 }
 
-<div class="text-center">
+<div>
     <div style="margin-top:20px">
         <input id="UserId" type="hidden" value="@ViewBag.User.Id" />
-        <label for="UserName" class="sr-only">名称</label>
-        <input type="text" id="UserName" class="form-control" placeholder="名称" autocomplete="off" required autofocus style="width:40%" value="@ViewBag.User.UserName">
 
-        <label for="Phone" class="sr-only">电话号码</label>
-        <input type="text" id="Phone" class="form-control" placeholder="电话号码" autocomplete="off" required autofocus style="width:40%" value="@ViewBag.User.Phone">
+        <div class="col-md-6 mb-3">
+            <label for="UserName" class="sr-only">名称</label>
+            <input type="text" id="UserName" class="form-control" placeholder="名称" autocomplete="off" required autofocus style="width:80%" value="@ViewBag.User.UserName">
+        </div>
 
-        <div class="text-error" id="error" style="display:none"></div>
-        <button class="btn btn-lg btn-primary btn-block" type="button" id="save_btn" style="width:40%">保存</button>
+        <div class="col-md-6 mb-3">
+            <label for="Phone" class="sr-only">电话号码</label>
+            <input type="text" id="Phone" class="form-control" placeholder="电话号码" autocomplete="off" required autofocus style="width:80%" value="@ViewBag.User.Phone">
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="custom-control custom-checkbox">
+                @if (ViewBag.User.IsSuperAdmin == 0)
+                {
+                    <input type="checkbox" class="custom-control-input" id="IsSuperAdmin" checked="checked" />
+                }
+                else 
+                { 
+                    <input type="checkbox" class="custom-control-input" id="IsSuperAdmin" />
+                }
+
+                <label class="custom-control-label" for="IsSuperAdmin">是否管理员</label>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="text-error" id="error" style="display:none"></div>
+            <button class="btn btn-lg btn-primary btn-block" type="button" id="save_btn" style="width:80%">保存</button>
+        </div>
     </div>
-</div>
+ </div>
 <script>
     $(function () {
         $("#UserList").addClass("active");
@@ -35,6 +57,13 @@
                 $("#error").html("请输入手机号码");
                 return;
             }
+
+            if ($("#IsSuperAdmin").is(':checked')) {
+                data.IsSuperAdmin = 0;
+            } else {
+                data.IsSuperAdmin = 1;
+            }
+
             $.ajax({
                 type: "POST",
                 url: "/User/RunUpdate",

@@ -40,7 +40,8 @@ namespace Equipment.Controllers
                 Password = userInfoModel.Password,
                 Phone = userInfoModel.Phone,
                 UserName = userInfoModel.UserName,
-                CreateUserId = Convert.ToInt64(HttpContext.Request.Cookies["UserId"])
+                CreateUserId = Convert.ToInt64(HttpContext.Request.Cookies["UserId"]),
+                IsSuperAdmin = userInfoModel.IsSuperAdmin.Value
             };
             int code = _userService.AddUser(entity);
             return new JsonResult(code);
