@@ -19,7 +19,7 @@
                     <tr>
                         <th>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="ck_all" >
+                                <input type="checkbox" class="custom-control-input" id="ck_all" />
                                 <label class="custom-control-label" for="ck_all"></label>
                             </div>
                         </th>
@@ -37,7 +37,7 @@
                         <tr id="equipment_@(equipment.Id)_tr">
                             <td class="custom-checkbox">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="ck_equipment custom-control-input" id="ck_equipment_@(equipment.Id)">
+                                    <input type="checkbox" class="ck_equipment custom-control-input" id="ck_equipment_@(equipment.Id)" eid="@equipment.Id" />
                                     <label class="custom-control-label" for="ck_equipment_@(equipment.Id)"></label>
                                 </div>
                             </td>
@@ -117,10 +117,22 @@
             }
         });
         $("#ck_all").click(function () {
-            var ischecked = $(this).is(":checked");
+            var ischecked = $("#ck_all").is(":checked");
             $(".ck_equipment").each(function () {
-                $(this).attr("checked", ischecked);
+                 $(this).attr("checked", ischecked);
              });
+        });
+
+        $("#PrintCode").click(function () {
+            var eids = "";
+            $(".ck_equipment").each(function () {
+                if ($(this).is(":checked")) {
+                    eids += ","+$(this).attr("eid");
+                }
+            });
+            if (eids != "") {
+               window.open("/Common/QRCode?eids=" + eids.substring(1));
+            }
         });
     });
 </script>

@@ -16,7 +16,7 @@ namespace Equipment.Controllers
 
         public UserController()
         {
-            _userService = new UserService();
+            _userService = new UserService(_dbContext);
         }
 
         public IActionResult List()

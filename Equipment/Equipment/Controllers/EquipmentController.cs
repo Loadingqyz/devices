@@ -24,8 +24,8 @@ namespace Equipment.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         public EquipmentController(IWebHostEnvironment hostingEnvironment)
         {
-            _userService = new UserService();
-            _equipmentService = new EquipmentService();
+            _userService = new UserService(_dbContext);
+            _equipmentService = new EquipmentService(_dbContext);
             _hostingEnvironment = hostingEnvironment;
         }
         public IActionResult List()
@@ -148,7 +148,7 @@ namespace Equipment.Controllers
         }
 
         [HttpGet]
-        public void RunQRCode(string eid,bool isShowName=true, int pixel=8)
+        public void RunQRCode(string eid,bool isShowName=true, int pixel=6)
         {
             string message = string.Empty;
             EquipmentEntity oldEntity = _equipmentService.GetEquipmentById(Convert.ToInt64(eid));
@@ -160,18 +160,21 @@ namespace Equipment.Controllers
             Response.ContentType = "image/jpeg";
 
             Bitmap bitmap = RaffQRCode.GetQRCode($"http://{Request.Host}/Equipment/detail?eid={eid}", pixel);
+            Graphics g = null;
             if (isShowName)
             {
                 int x = bitmap.Width;
                 int y = bitmap.Height;
-                Graphics g = Graphics.FromImage(bitmap);
-                Font f = new Font("Verdana", 15, FontStyle.Bold);//字体  
+                g = Graphics.FromImage(bitmap);
+                Font f = new Font("Verdana", 10, FontStyle.Bold);//字体  
                 Brush b = new SolidBrush(Color.Red);//颜色  
                 g.DrawString($"【{message}】", f, b, x / 4, y - 25);
             }
 
             MemoryStream ms = new MemoryStream();
             bitmap.Save(ms, ImageFormat.Jpeg);
+            bitmap.Dispose();
+            g?.Dispose();
             Response.Body.WriteAsync(ms.GetBuffer(), 0, Convert.ToInt32(ms.Length));
             Response.Body.Close();
         }

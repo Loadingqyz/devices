@@ -10,6 +10,11 @@ namespace Equipment.Service.Equipment
 {
 	public class EquipmentService
 	{
+		private MySqlContext _dbContext;
+		public EquipmentService(MySqlContext dbContext)
+		{
+			_dbContext = dbContext;
+		}
 		public int AddEquipment(EquipmentEntity equipmentEntity)
 		{
 			string sql = @"INSERT INTO `ttl`.`ttl_engineering_equipment` (
@@ -32,10 +37,10 @@ namespace Equipment.Service.Equipment
 										@ScrapDate,
 										@CreateUserId
 									  );SELECT LAST_INSERT_ID();";
-			int insertId = MySqlContext.ExecuteScalar<int>(sql, equipmentEntity);
+			int insertId = _dbContext.ExecuteScalar<int>(sql, equipmentEntity);
 			if (insertId > 0) 
 			{
-				MySqlContext.Execute(@"INSERT INTO `ttl`.`ttl_engineering_equipment_log` (
+				_dbContext.Execute(@"INSERT INTO `ttl`.`ttl_engineering_equipment_log` (
 									  `EquipmentId`,
 									  `EquipmentName`,
 									  `LastMaintenanceNames`, `LastMaintenanceIds`,
@@ -64,7 +69,7 @@ namespace Equipment.Service.Equipment
 		{
 			string sql = $"SELECT * FROM `ttl`.`ttl_engineering_equipment` WHERE isdelete=0 LIMIT {queryModel.StartIndex},{queryModel.PageSize}; SELECT COUNT(1) FROM `ttl`.`ttl_engineering_equipment` WHERE isdelete=0;";
 			EquipmentListModel resultModel = new EquipmentListModel();
-			using (var gridReader = MySqlContext.QueryMultiple(sql))
+			using (var gridReader = _dbContext.QueryMultiple(sql))
 			{
 				resultModel.EquipmentList = gridReader.Read<EquipmentModel>().ToList();
 				resultModel.TotalCount = gridReader.Read<int>().Single();
@@ -76,7 +81,7 @@ namespace Equipment.Service.Equipment
 
 		public EquipmentEntity GetEquipmentById(long id)
 		{
-			return MySqlContext.QueryFirstOrDefault<EquipmentEntity>($"select * from `ttl`.`ttl_engineering_equipment` WHERE isdelete=0 and id={id}");
+			return _dbContext.QueryFirstOrDefault<EquipmentEntity>($"select * from `ttl`.`ttl_engineering_equipment` WHERE isdelete=0 and id={id}");
 		}
 
 		public int UpdateEquipment(EquipmentEntity equipmentEntity,string logContent= "修改设备")
@@ -103,11 +108,11 @@ namespace Equipment.Service.Equipment
 				sqlBuilder.Append(",`UpdateUserId` = @UpdateUserId");
 
 			if (sqlBuilder.Length > 0)
-				code = MySqlContext.Execute($"UPDATE `ttl`.`ttl_engineering_equipment`  SET {sqlBuilder.ToString().Substring(1)} WHERE `Id` =@Id ;", equipmentEntity);
+				code = _dbContext.Execute($"UPDATE `ttl`.`ttl_engineering_equipment`  SET {sqlBuilder.ToString().Substring(1)} WHERE `Id` =@Id ;", equipmentEntity);
 
 			if (code > 0)
 			{
-				MySqlContext.Execute(@"INSERT INTO `ttl`.`ttl_engineering_equipment_log` (
+				_dbContext.Execute(@"INSERT INTO `ttl`.`ttl_engineering_equipment_log` (
 									  `EquipmentId`,
 									  `EquipmentName`,
 									  `LastMaintenanceNames`, `LastMaintenanceIds`,

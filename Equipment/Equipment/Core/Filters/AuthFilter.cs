@@ -9,12 +9,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Extensions;
+using Equipment.Service;
 
 namespace Equipment.Core.Filters
 {
 	public class AuthFilter : Attribute, IAuthorizationFilter
 	{
-		private readonly UserService _userService;
 		private List<string> _loginUrl = new List<string>()
 		{
 			"/system/runlogin",
@@ -29,22 +29,19 @@ namespace Equipment.Core.Filters
 		{
 			"user"
 		};
-		public AuthFilter()
-		{
-			_userService = new UserService();
-		}
 		
 		public void OnAuthorization(AuthorizationFilterContext context)
 		{
+			UserService userService = new UserService(new MySqlContext());
 			bool isAuth = false;
 			var cookies=context.HttpContext.Request.Cookies;
 			string requestUrl = context.HttpContext.Request.Path.Value.ToLower();
 			if (cookies.ContainsKey("AuthInfo") && cookies.ContainsKey("UserName") && cookies.ContainsKey("UserId"))
 			{
-				UserEntity userEntity = _userService.GetUserById(cookies["UserId"]);
+				UserEntity userEntity = userService.GetUserById(cookies["UserId"]);
 				if (userEntity != null)
 				{ 
-					string auth = _userService.GenerateAuthInfo(userEntity);
+					string auth = userService.GenerateAuthInfo(userEntity);
 					if (auth == cookies["AuthInfo"])
 					{
 						string requestDomain = requestUrl.Split("/")[1];

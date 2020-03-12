@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equipment.Models.User;
+using Equipment.Service;
 using Equipment.Service.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ namespace Equipment.Controllers
 
         public SystemController()
         {
-            _userService = new UserService();
+            _userService = new UserService(new MySqlContext());
         }
         public IActionResult Login()
         {

@@ -17,7 +17,7 @@ namespace Equipment.Controllers
             List<string> url = new List<string>();
             foreach (var eid in eidList)
             {
-                url.Add($"http{(HttpContext.Request.IsHttps ? "s" : "")}://{HttpContext.Request.Host}/Equipment/RunQRCode?eid={eid}");
+                url.Add($"http{(HttpContext.Request.IsHttps ? "s" : "")}://{HttpContext.Request.Host}/Equipment/RunQRCode?eid={eid}&pixel=6");
             }
 
             ViewBag.QRCodeUrls = url;

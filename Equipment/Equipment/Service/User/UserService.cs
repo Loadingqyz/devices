@@ -10,6 +10,11 @@ namespace Equipment.Service.User
 {
 	public class UserService
 	{
+		private MySqlContext _dbContext;
+		public UserService(MySqlContext dbContext)
+		{
+			_dbContext = dbContext;
+		}
 		public string GenerateAuthInfo(UserEntity userEntity)
 		{
 			if (userEntity.Id == 0 || string.IsNullOrEmpty(userEntity.Password))
@@ -18,24 +23,24 @@ namespace Equipment.Service.User
 		}
 		public UserEntity CheckUserLogin(UserLoginModel userLoginModel)
 		{
-			UserEntity user = MySqlContext.QueryFirstOrDefault<UserEntity>($"select * from `ttl`.`ttl_user` where `Phone` =@phone and `Password`=@password ;", userLoginModel);
+			UserEntity user = _dbContext.QueryFirstOrDefault<UserEntity>($"select * from `ttl`.`ttl_user` where `Phone` =@phone and `Password`=@password ;", userLoginModel);
 			return user;
 		}
 
 		public UserEntity GetUserById(string userId)
 		{
-			UserEntity user = MySqlContext.QueryFirstOrDefault<UserEntity>($"select * from `ttl`.`ttl_user` where `Id` ={userId};");
+			UserEntity user = _dbContext.QueryFirstOrDefault<UserEntity>($"select * from `ttl`.`ttl_user` where `Id` ={userId};");
 			return user;
 		}
 
 		public List<UserEntity> GetUserList()
 		{
-			return MySqlContext.Query<UserEntity>($"select * from `ttl`.`ttl_user`;").ToList();
+			return _dbContext.Query<UserEntity>($"select * from `ttl`.`ttl_user`;").ToList();
 		}
 
 		public int AddUser(UserEntity userEntity)
 		{
-			return MySqlContext.Execute("INSERT INTO `ttl`.`ttl_user` (`UserName`,`Password`,`Phone`,`CreateUserId`,`IsSuperAdmin`) VALUES(@UserName,@Password,@Phone,@CreateUserId,@IsSuperAdmin); ", userEntity);
+			return _dbContext.Execute("INSERT INTO `ttl`.`ttl_user` (`UserName`,`Password`,`Phone`,`CreateUserId`,`IsSuperAdmin`) VALUES(@UserName,@Password,@Phone,@CreateUserId,@IsSuperAdmin); ", userEntity);
 		}
 
 		public int DeleteUser(string userId)
@@ -43,8 +48,8 @@ namespace Equipment.Service.User
 			UserEntity user = GetUserById(userId);
 			if (user == null)
 				return -1;
-			MySqlContext.Execute($"INSERT IGNORE INTO `ttl`.`ttl_user_delete` (  `Tdate`,`UserName`,`Password`,`Phone`,`IsSuperAdmin`,`CreateUserId`) SELECT `Tdate`,`UserName`,`Password`,`Phone`,`IsSuperAdmin`,`CreateUserId` FROM `ttl`.`ttl_user` WHERE id={userId}");
-			MySqlContext.Execute($"DELETE From `ttl`.`ttl_user` where `Id`={userId}");
+			_dbContext.Execute($"INSERT IGNORE INTO `ttl`.`ttl_user_delete` (  `Tdate`,`UserName`,`Password`,`Phone`,`IsSuperAdmin`,`CreateUserId`) SELECT `Tdate`,`UserName`,`Password`,`Phone`,`IsSuperAdmin`,`CreateUserId` FROM `ttl`.`ttl_user` WHERE id={userId}");
+			_dbContext.Execute($"DELETE From `ttl`.`ttl_user` where `Id`={userId}");
 			return 1;
 		}
 
@@ -54,7 +59,7 @@ namespace Equipment.Service.User
 
 			if (!string.IsNullOrEmpty(userUpdateModel.Phone))
 			{
-				List<int> countList = MySqlContext.Query<int>($"SELECT COUNT(1) FROM  `ttl`.`ttl_user` WHERE `Id`!=@UserId and `Phone`=@Phone", userUpdateModel).ToList();
+				List<int> countList = _dbContext.Query<int>($"SELECT COUNT(1) FROM  `ttl`.`ttl_user` WHERE `Id`!=@UserId and `Phone`=@Phone", userUpdateModel).ToList();
 				if (countList[0] > 0)
 					return -1;
 				set.Append($",`Phone` = @Phone");
@@ -70,7 +75,7 @@ namespace Equipment.Service.User
 				set.Append($",`IsSuperAdmin` = @IsSuperAdmin");
 
 			if (set.Length>0)
-				return MySqlContext.Execute($"UPDATE `ttl`.`ttl_user` SET {set.ToString().Substring(1)} where `Id`=@UserId", userUpdateModel);
+				return _dbContext.Execute($"UPDATE `ttl`.`ttl_user` SET {set.ToString().Substring(1)} where `Id`=@UserId", userUpdateModel);
 
 			return 0;
 		}
