@@ -61,6 +61,13 @@
 </html>
 <script>
     $(function () {
+        $(document).keyup(function (event) {
+            if (event.keyCode == 13) {//监听回车事件
+                if ($("#inputPassword").is(":focus")) {
+                    $("#login_btn").click();
+                }
+            }
+        });
         $("#login_btn").click(function () {
             $("#error").html("");
             var data = {

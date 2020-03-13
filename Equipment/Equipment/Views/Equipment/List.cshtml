@@ -65,7 +65,13 @@
     </div>
 <script>
     $(function () {
-
+        $(document).keyup(function (event) {
+            if (event.keyCode == 13) {//监听回车事件
+                if ($("#Search_Value").is(":focus")) {
+                    $("#Search_Svg").click();
+                }
+            }
+        });
         $("#EquipmentList").addClass("active");
         $("#NewEquipment").click(function () {
             location.href = "/Equipment/Add";
