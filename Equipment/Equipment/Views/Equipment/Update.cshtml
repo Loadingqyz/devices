@@ -175,7 +175,8 @@
                     },
                     success: function (result) {
                         if (result != null && result == "1") {
-                             alert("保存成功");
+                            alert("保存成功");
+                            location.href = "/Equipment/List";
                         } else {
                             alert("保存失败,"+result);
                         }

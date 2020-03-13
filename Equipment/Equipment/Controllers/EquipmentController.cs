@@ -35,7 +35,10 @@ namespace Equipment.Controllers
             EquipmentQueryModel queryModel = new EquipmentQueryModel();
             if (!string.IsNullOrEmpty(Request.Query["page"]))
                 queryModel.PageIndex = Convert.ToInt32(Request.Query["page"]);
+            if (!string.IsNullOrEmpty(Request.Query["args"]))
+                queryModel.QueryArgs = Request.Query["args"];
             EquipmentListModel equipmentResult = _equipmentService.GetEquipmentByPagination(queryModel);
+            equipmentResult.MatchQueryArgs();
             ViewBag.Equipment = equipmentResult;
             return View();
         }
@@ -170,13 +173,15 @@ namespace Equipment.Controllers
                 g = Graphics.FromImage(bitmap);
                 Font f = new Font("Verdana", 10, FontStyle.Bold);//字体  
                 Brush b = new SolidBrush(Color.Red);//颜色  
-                g.DrawString($"【{message}】", f, b, x / 4, y - 25);
+                StringFormat stringFormat = new StringFormat();
+                stringFormat.Alignment = StringAlignment.Center;
+                g.DrawString($"{message}", f, b, x/2 - message.Length/2, y - 20, stringFormat);
             }
 
             MemoryStream ms = new MemoryStream();
             bitmap.Save(ms, ImageFormat.Jpeg);
-            bitmap.Dispose();
-            g?.Dispose();
+            //bitmap.Dispose();
+            //g?.Dispose();
             Response.Body.WriteAsync(ms.GetBuffer(), 0, Convert.ToInt32(ms.Length));
             Response.Body.Close();
         }

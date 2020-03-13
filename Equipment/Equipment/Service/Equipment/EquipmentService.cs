@@ -68,15 +68,30 @@ namespace Equipment.Service.Equipment
 
 		public EquipmentListModel GetEquipmentByPagination(EquipmentQueryModel queryModel)
 		{
-			string sql = $"SELECT * FROM `ttl`.`ttl_engineering_equipment` WHERE isdelete=0 LIMIT {queryModel.StartIndex},{queryModel.PageSize}; SELECT COUNT(1) FROM `ttl`.`ttl_engineering_equipment` WHERE isdelete=0;";
+			StringBuilder where = new StringBuilder();
+			if (!string.IsNullOrEmpty(queryModel.QueryArgs))
+			{
+				where.Append($" and (`EquipmentName` like '%{queryModel.QueryArgs}%'");
+				where.Append($" or `LastMaintenanceNames` like '%{queryModel.QueryArgs}%'");
+				where.Append($" or `FixedAssetId` like '%{queryModel.QueryArgs}%' ) ");
+			}
+
+
+			StringBuilder sqlBuilder1 = new StringBuilder();
+			sqlBuilder1.Append($"SELECT * FROM `ttl`.`ttl_engineering_equipment` WHERE isdelete=0 {where.ToString()} LIMIT {queryModel.StartIndex},{queryModel.PageSize}; ");
+
+			StringBuilder sqlBuilder2 = new StringBuilder();
+			sqlBuilder2.Append($"SELECT COUNT(1) FROM `ttl`.`ttl_engineering_equipment` WHERE isdelete=0 {where.ToString()};");
+
 			EquipmentListModel resultModel = new EquipmentListModel();
-			using (var gridReader = _dbContext.QueryMultiple(sql))
+			using (var gridReader = _dbContext.QueryMultiple($"{sqlBuilder1.ToString()}{sqlBuilder2.ToString()}"))
 			{
 				resultModel.EquipmentList = gridReader.Read<EquipmentModel>().ToList();
 				resultModel.TotalCount = gridReader.Read<int>().Single();
 			}
 			resultModel.PageIndex = queryModel.PageIndex;
 			resultModel.PageSize = queryModel.PageSize;
+			resultModel.QueryArgs = queryModel.QueryArgs;
 			return resultModel;
 		}
 

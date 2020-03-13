@@ -10,5 +10,6 @@ namespace Equipment.Models.Equipment
 		public int PageIndex { get; set; } = 1;
 		public int PageSize { get; set; } = 20;
 		public int StartIndex => (PageIndex - 1) * PageSize;
+		public string QueryArgs { get; set; }
 	}
 }

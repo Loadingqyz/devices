@@ -2,14 +2,23 @@
 @{
     ViewData["Title"] = "设备列表";
 }
+    <script src="~/lib/jquery-pagination/jquery-bootstrap4-pagination.js"></script>
 
     <div class="text-center">
+
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h5">设备列表</h1>
+            <div class="btn-toolbar mb-2 mb-md-0" style="width:50%">
+                <input id="Search_Value" class="form-control" type="text" placeholder="设备名称/资产编号/维护人员" aria-label="Search" style="width:80%;border-color: #dee2e6;" value="@ViewBag.Equipment.QueryArgs">
+                <svg id="Search_Svg" width="2em" height="2em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="float:right;" >
+                    <path fill-rule="evenodd" d="M12.442 12.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z" clip-rule="evenodd"></path>
+                    <path fill-rule="evenodd" d="M8.5 14a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM15 8.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+
             <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group mr-2">
                     <button id="NewEquipment" type="button" class="btn btn-sm btn-outline-secondary">新增</button>
-                    <button id="PrintCode" type="button" class="btn btn-sm btn-outline-secondary">打印二维码</button>
+                    <button id="PrintCode" type="button" class="btn btn-sm btn-outline-secondary">打印二维码(A4纸)</button>
                 </div>
             </div>
         </div>
@@ -41,53 +50,22 @@
                                     <label class="custom-control-label" for="ck_equipment_@(equipment.Id)"></label>
                                 </div>
                             </td>
-                            <td>@equipment.FixedAssetId</td>
-                            <td>@equipment.EquipmentName</td>
+                            <td>@Html.Raw(@equipment.ShowFixedAssetId)</td>
+                            <td>@Html.Raw(equipment.ShowEquipmentName)</td>
                             <td>@equipment.ScrapDateStr</td>
-                            <td>@equipment.LastMaintenanceNames</td>
+                            <td>@Html.Raw(equipment.ShowLastMaintenanceNames)</td>
                             <td>@equipment.LastMaintenanceTimeStr</td>
-                            <td  eid="@equipment.Id"><a target="_blank" href="/Equipment/ShowQRCode?eid=@equipment.Id">二维码</a> <a href="/Equipment/Update?eid=@equipment.Id">修改</a> <a class="equipment_delete"  href="javascript:void(0);">删除</a></td>
+                            <td eid="@equipment.Id"><a target="_blank" href="/Equipment/ShowQRCode?eid=@equipment.Id">二维码</a> <a href="/Equipment/Update?eid=@equipment.Id">修改</a> <a class="equipment_delete" href="javascript:void(0);">删除</a></td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
-        <div style="float:right;">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    @if (ViewBag.Equipment.PageIndex != 1)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="/Equipment/List?page=@(ViewBag.Equipment.PageIndex-1)" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                    }
-                    @for (int i = 1; i <= ViewBag.Equipment.TotalPage; i++)
-                    {
-                        @if (i == ViewBag.Equipment.PageIndex)
-                        {
-                            <li class="page-item"><a class="page-link" style="font-weight: bold;" href="/Equipment/List?page=@i">@i</a></li>
-                        }
-                        else
-                        {
-                            <li class="page-item"><a class="page-link" href="/Equipment/List?page=@i">@i</a></li>
-                        }
-                    }
-                    @if (ViewBag.Equipment.PageIndex != ViewBag.Equipment.TotalPage)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="/Equipment/List?page=@(ViewBag.Equipment.PageIndex+1)" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    }
-                </ul>
-            </nav>
-        </div>
+        <div style="float:right;" id="pagination"></div>
     </div>
 <script>
     $(function () {
+
         $("#EquipmentList").addClass("active");
         $("#NewEquipment").click(function () {
             location.href = "/Equipment/Add";
@@ -119,10 +97,9 @@
         $("#ck_all").click(function () {
             var ischecked = $("#ck_all").is(":checked");
             $(".ck_equipment").each(function () {
-                 $(this).attr("checked", ischecked);
+                 $(this).prop("checked", ischecked);
              });
         });
-
         $("#PrintCode").click(function () {
             var eids = "";
             $(".ck_equipment").each(function () {
@@ -134,5 +111,30 @@
                window.open("/Common/QRCode?eids=" + eids.substring(1));
             }
         });
+        $("#Search_Svg").click(function () {
+            var args = $("#Search_Value").val().trim();
+            if (args == "") {
+                location.href = "/Equipment/List";
+            } else {
+                location.href = "/Equipment/List?args="+args;
+            }
+        });
+        $("#pagination").pagination({
+            pageSize: @ViewBag.Equipment.PageSize,                        
+            page: @ViewBag.Equipment.PageIndex,                     
+            totalRows: @ViewBag.Equipment.TotalCount,  
+            previous: "上一页",
+            next: "下一页",
+            debug: false,  
+            onClickPage: function (e) {
+                var pageIndex = e.currentTarget.innerText;
+                var url = "/Equipment/List?page=" + pageIndex;
+                var args = $("#Search_Value").val().trim();
+                if (args != "") {
+                    url += "&args="+args;
+                }
+                location.href = url;
+            }                          
+         });
     });
 </script>

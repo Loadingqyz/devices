@@ -44,7 +44,7 @@
 <body>
     <a id="CodePrint" class="print" href="javascript:void(0);" onclick="RunPrint();" >打印</a>
     <!--startprint-->
-    <div class="container a4-endwise" id="test">
+    <div class="container a4-endwise" style="text-align: left;">
         @foreach (var url in ViewBag.QRCodeUrls)
         {
             <img src="@url" />
