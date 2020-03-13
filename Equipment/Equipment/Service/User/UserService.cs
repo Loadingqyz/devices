@@ -1,4 +1,5 @@
 ﻿using Equipment.Models.User;
+using Equipment.Service.Db;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Equipment.Service.User
 {
-	public class UserService
+	public class UserService: IBaseService
 	{
 		private MySqlContext _dbContext;
 		public UserService(MySqlContext dbContext)

@@ -22,7 +22,7 @@
     <meta name="msapplication-config" content="~/lib/bootstrap/dist/assets/img/favicons/browserconfig.xml">
     <meta name="theme-color" content="#563d7c">
     <script src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="~/lib/jquery/dist/jquery.md5.js"></script>
+    <script src="~/lib/jquery-md5/jquery.md5.js"></script>
     <style>
         .bd-placeholder-img {
             font-size: 1.125rem;
@@ -88,11 +88,11 @@
                     alert("Something went wrong!");
                 },
                 success: function (result) {
-                    console.log(result);
                     if (result != null && result.userId != undefined && result.userId != "") {
-                        if (result.redirectUrl == undefined || result.redirectUrl == "") {
+                        if (result.redirectUrl == undefined || result.redirectUrl == "" || result.redirectUrl == "null" || result.redirectUrl == null) {
                             location.href = "/Equipment/List";
                         } else {
+                            //$.cookie("RedirectUrl", null);  
                              location.href = result.redirectUrl;
                         }
                     }

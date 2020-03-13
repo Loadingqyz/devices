@@ -1,5 +1,6 @@
 ﻿using Equipment.Entities.Equipment;
 using Equipment.Models.Equipment;
+using Equipment.Service.Db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Equipment.Service.Equipment
 {
-	public class EquipmentService
+	public class EquipmentService: IBaseService
 	{
 		private MySqlContext _dbContext;
 		public EquipmentService(MySqlContext dbContext)

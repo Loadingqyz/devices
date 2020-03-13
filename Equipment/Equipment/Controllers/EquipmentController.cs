@@ -5,10 +5,10 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Equipment.Core.Common;
 using Equipment.Entities.Equipment;
 using Equipment.Models.Equipment;
 using Equipment.Models.User;
+using Equipment.Service.Common;
 using Equipment.Service.Equipment;
 using Equipment.Service.User;
 using Microsoft.AspNetCore.Hosting;
@@ -21,12 +21,14 @@ namespace Equipment.Controllers
     {
         private readonly UserService _userService;
         private readonly EquipmentService _equipmentService;
+        private readonly QRCodeService _qRCodeService;
         private readonly IWebHostEnvironment _hostingEnvironment;
-        public EquipmentController(IWebHostEnvironment hostingEnvironment)
+        public EquipmentController(IWebHostEnvironment hostingEnvironment, UserService userService, EquipmentService equipmentService, QRCodeService qRCodeService)
         {
-            _userService = new UserService(_dbContext);
-            _equipmentService = new EquipmentService(_dbContext);
+            _userService = userService;
+            _equipmentService = equipmentService;
             _hostingEnvironment = hostingEnvironment;
+            _qRCodeService = qRCodeService;
         }
         public IActionResult List()
         {
@@ -159,7 +161,7 @@ namespace Equipment.Controllers
 
             Response.ContentType = "image/jpeg";
 
-            Bitmap bitmap = RaffQRCode.GetQRCode($"http://{Request.Host}/Equipment/detail?eid={eid}", pixel);
+            Bitmap bitmap = _qRCodeService.GetQRCode($"http://{Request.Host}/Equipment/detail?eid={eid}", pixel);
             Graphics g = null;
             if (isShowName)
             {
@@ -186,7 +188,7 @@ namespace Equipment.Controllers
             if (oldEntity == null)
                 return RedirectToAction("System", "Error");
 
-            var svgQrCode = RaffQRCode.GetSvgQRCode($"http://{Request.Host}/Equipment/detail?eid={eid}", 4);
+            var svgQrCode = _qRCodeService.GetSvgQRCode($"http://{Request.Host}/Equipment/detail?eid={eid}", 4);
             var rootPath = _hostingEnvironment.ContentRootPath;
             var svgName = $"{oldEntity.FixedAssetId}.svg";
             System.IO.File.WriteAllText($@"{rootPath}\{svgName}", svgQrCode);

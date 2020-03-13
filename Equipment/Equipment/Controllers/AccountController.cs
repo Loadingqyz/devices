@@ -12,9 +12,9 @@ namespace Equipment.Controllers
     public class AccountController : BaseController
     {
         private readonly UserService _userService;       
-        public AccountController()
+        public AccountController(UserService userService)
         {
-            _userService = new UserService(_dbContext);
+            _userService = userService;
         }
         public IActionResult Info()
         {

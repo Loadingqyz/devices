@@ -6,7 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Equipment.Service
+namespace Equipment.Service.Db
 {
 	public class DapperService
 	{
@@ -34,7 +34,7 @@ namespace Equipment.Service
 		}
 	}
 
-	public class MySqlContext : IDisposable
+	public class MySqlContext : IBaseService,IDisposable
 	{
 		private readonly IDbConnection _connection;
 		public MySqlContext()

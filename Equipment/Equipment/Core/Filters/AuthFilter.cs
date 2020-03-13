@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Extensions;
 using Equipment.Service;
+using Equipment.Service.Db;
 
 namespace Equipment.Core.Filters
 {
@@ -29,7 +30,7 @@ namespace Equipment.Core.Filters
 		{
 			"user"
 		};
-		
+
 		public void OnAuthorization(AuthorizationFilterContext context)
 		{
 			UserService userService = new UserService(new MySqlContext());
@@ -70,7 +71,7 @@ namespace Equipment.Core.Filters
 				{
 					context.HttpContext.Response.Cookies.Append("RedirectUrl", context.HttpContext.Request.GetDisplayUrl(), new CookieOptions()
 					{
-						Expires = DateTime.Now.AddDays(7)
+						Expires = DateTime.Now.AddMinutes(3)
 					});
 					context.Result = new RedirectResult("/System/Login");
 				}

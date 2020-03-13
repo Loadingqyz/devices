@@ -14,9 +14,9 @@ namespace Equipment.Controllers
     {
         private readonly UserService _userService;
 
-        public UserController()
+        public UserController(UserService userService)
         {
-            _userService = new UserService(_dbContext);
+            _userService = userService;// new UserService(_dbContext);
         }
 
         public IActionResult List()

@@ -14,9 +14,9 @@ namespace Equipment.Controllers
     {
         private readonly UserService _userService;
 
-        public SystemController()
+        public SystemController(UserService userService)
         {
-            _userService = new UserService(new MySqlContext());
+            _userService = userService;
         }
         public IActionResult Login()
         {
@@ -50,7 +50,6 @@ namespace Equipment.Controllers
             HttpContext.Response.Cookies.Append("UserId", resultModel.UserId, cookieOptions);
             HttpContext.Response.Cookies.Append("UserName", resultModel.UserName, cookieOptions);
             HttpContext.Response.Cookies.Append("AuthInfo", resultModel.AuthInfo, cookieOptions);
-
             return new JsonResult(resultModel);
         }
 
@@ -59,6 +58,7 @@ namespace Equipment.Controllers
             HttpContext.Response.Cookies.Delete("UserId");
             HttpContext.Response.Cookies.Delete("UserName");
             HttpContext.Response.Cookies.Delete("AuthInfo");
+            HttpContext.Response.Cookies.Delete("RedirectUrl");
             HttpContext.Response.Redirect("/System/Login");
             return new JsonResult("ok");
         }

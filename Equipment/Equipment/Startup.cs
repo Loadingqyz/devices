@@ -1,8 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Equipment.Core.Common;
+using Equipment.Service;
+using Equipment.Service.Common;
+using Equipment.Service.Db;
+using Equipment.Service.Equipment;
+using Equipment.Service.User;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +31,8 @@ namespace Equipment
 		{
 			services.AddControllersWithViews();
 			services.AddHttpContextAccessor();
+
+			ContainerBuilderService.Load<IBaseService>(services);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,7 +44,7 @@ namespace Equipment
 			}
 			else
 			{
-				app.UseExceptionHandler("/Home/Error");
+				app.UseExceptionHandler("/System/Error");
 				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 				app.UseHsts();
 			}

@@ -11,6 +11,5 @@ namespace Equipment.Controllers
     [AuthFilter]
     public abstract class BaseController : Controller
     {
-        protected MySqlContext _dbContext = new MySqlContext();
     }
 }
