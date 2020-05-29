@@ -223,6 +223,8 @@
     <Content Include="css\style.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="jcdemo1.html" />
+    <Content Include="jcdemo.html" />
     <Content Include="js\jquery-1.9.1.min.js" />
     <Content Include="js\jquery-1.js" />
     <Content Include="js\jweixin-1.js" />
@@ -230,14 +232,15 @@
     <Content Include="js\size.js" />
     <Content Include="js\weixinShare.js" />
     <Content Include="js\wow.js" />
-    <Content Include="Web\jcdemo.html" />
     <Content Include="css\jhzw-l.ttf" />
     <Content Include="css\jhzw-l.woff" />
     <Content Include="css\jhzw-l.woff2" />
     <Content Include="css\jhzw.ttf" />
     <Content Include="css\jhzw.woff" />
     <Content Include="css\jhzw.woff2" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="mp3\1.mp3" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
