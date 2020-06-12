@@ -1,4 +1,4 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 *, :after, :before{-webkit-box-sizing: border-box; box-sizing: border-box;}
 html{width:100%; -webkit-text-size-adjust:none; font-size:50px;  }
 @font-face {
@@ -284,7 +284,7 @@ input, button, textarea, select, optgroup, option{font-family: inherit; font-siz
 .index1304 img{position:absolute; top:0;}
 .index1304:before{ content:""; display:block; width:1px; position:absolute; z-index:1;top:.81rem; bottom:0; background-color:#e63f46; left:50%}
 
-.index1305{ width:.44rem; left:2.8rem; bottom:.5rem}
+.index1305{ width:.44rem; left:0.8rem; bottom:.5rem}
 
 .index14{ height:7.3rem; margin-bottom:.1rem; }
 .index1401{z-index:6; width:1.72rem; height:1.31rem;background:url(../images/index1301.png) no-repeat center; background-size:100%;top:0;right:.85rem; color:#fff}
